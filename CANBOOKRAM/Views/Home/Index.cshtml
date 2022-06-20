@@ -1,0 +1,56 @@
+﻿@model HomeModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row g-4">
+    <div class="col-lg-3">
+         <partial name="_UserSidebarPartial" />
+    </div>
+    <div class="col-md-8 col-lg-6 vstack gap-4">
+        <partial name="_PostPartial" model="Model.UserPost" />
+        <div id="posts-div">
+           <partial name="_PostListPartial" model="Model.UserPosts" />
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="row g-4">
+            <partial name="_WhoToFollowPartial" model="Model.Users" />
+            <partial name="_TrendingPostsPartial" model="Model.TrendingPosts" />
+        </div>
+    </div>
+</div>
+
+<script>
+function RefreshPostList() {
+    $("#posts-div").load("/Home/RefreshPosts")
+}
+
+function LikePost(id) {
+    $.ajax({
+         type: "POST",
+         url: "/Home/LikePost?id=" + id,
+         success: function (result) {
+             RefreshPostList();                 
+         },
+         error: function (result) {
+             alert(result);
+         }
+     }); 
+}
+
+function DeletePost(id) {
+    $.ajax({
+         type: "POST",
+         url: "/Home/DeletePost?id=" + id,
+         success: function (result) {
+             RefreshPostList();                 
+         },
+         error: function (result) {
+             alert(result);
+         }
+     }); 
+}
+
+
+</script>

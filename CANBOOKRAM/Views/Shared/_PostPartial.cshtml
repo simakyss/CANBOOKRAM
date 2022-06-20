@@ -1,0 +1,48 @@
+﻿@model UserPost
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<div class="card">
+    <form data-ajax="true" data-ajax-method="POST" data-ajax-failure="OnFailure"
+            data-ajax-success="OnSuccess" asp-controller="Home" asp-action="CreatePost" class="card-body" enctype="multipart/form-data">
+        <div class="d-flex mb-3">
+            <div class="avatar avatar-xs me-2">
+                @if (UserManager.GetUserAsync(User).Result.ProfilePicture != null)
+                {
+                    <img class="avatar-img rounded-circle" src="data:image/*;base64,@(Convert.ToBase64String(UserManager.GetUserAsync(User).Result.ProfilePicture))" alt="avatar">
+                }
+                else
+                {
+                    <img class="avatar-img rounded-circle" src="/assets/images/pp.png" alt="">
+                }
+            </div>
+            <div class="w-100">
+                <textarea asp-for="Message" class="form-control pe-4 border-0" rows="2" data-autoresize="" placeholder="Share your thoughts..." style="height: 80px;"></textarea>
+            </div>
+        </div>
+        <ul class="nav nav-pills nav-stack small fw-normal">
+            <li class="nav-item">
+                <input type="file" accept=".png,.jpg,.jpeg"
+                       asp-for="Image"
+                       class="nav-link bg-light py-1 px-2 mb-0" />
+            </li>
+            <li class="nav-item dropdown ms-sm-auto">
+                <button type="submit" class="nav-link bg-light py-1 px-2 mb-0">
+                    Submit
+                </button>
+            </li>
+        </ul>
+    </form>
+</div>
+<script>
+    function OnFailure() {
+       alert("An error occured");
+    }
+ 
+    function OnSuccess() {
+        $("#Message").val('');
+        $("#Image").val(null);
+        RefreshPostList();
+    }
+</script>

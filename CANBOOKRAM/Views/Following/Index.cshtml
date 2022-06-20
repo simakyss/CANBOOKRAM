@@ -1,0 +1,29 @@
+﻿@model List<UserFriend>
+
+<div class="card">
+    <div class="card-header border-0 pb-0">
+       <h5 class="card-title">Following</h5> 
+    </div>
+    <div id="data-div" class="card-body">
+        <partial name="_FollowingPartial" />
+    </div>
+</div>
+
+<script>
+function RefreshList() {
+    $("#data-div").load("/Following/RefreshList")
+}
+
+function RemoveFollowing(id) {
+    $.ajax({
+         type: "POST",
+         url: "/Following/RemoveFollowing?id=" + id,
+         success: function (result) {
+             RefreshList();                 
+         },
+         error: function (result) {
+             alert('An error occured');
+         }
+     }); 
+}
+</script>

@@ -1,0 +1,234 @@
+﻿@model UserModel
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var _user = UserManager.GetUserAsync(User).Result;
+}
+
+<div class="row g-4">
+    <div class="col-lg-8 vstack gap-4">
+        <div class="card">
+            <div class="h-200px rounded-top" style="background-image:url(/assets/images/bg/01.jpg); background-position: center; background-size: cover; background-repeat: no-repeat;"></div>
+            <div class="card-body py-0">
+              <div class="d-sm-flex align-items-start text-center text-sm-start">
+                <div>
+                  <!-- Avatar -->
+                  <div class="avatar avatar-xxl mt-n5 mb-3">
+                    @if(Model.ProfilePicture != null)
+                    {
+                        <img class="avatar-img rounded-circle border border-white border-3" src="data:image/*;base64,@(Convert.ToBase64String(Model.ProfilePicture))" alt="">
+                    }
+                    else
+                    {
+                        <img class="avatar-img rounded-circle border border-white border-3" src="/assets/images/pp.png" alt="">
+                    }
+                </div>
+                </div>
+                <div class="ms-sm-4 mt-sm-3">
+                  <!-- Info -->
+                  <h1 class="mb-0 h5">@(!String.IsNullOrEmpty(Model.Name) ? Model.Name : Model.UserName) <i class="bi bi-patch-check-fill text-success small"></i></h1>
+                  <p>@Model.FollowerCount Followers</p>
+                </div>
+                <!-- Button -->
+                <div class="d-flex mt-3 justify-content-center ms-sm-auto">
+                    @if (Model.UserId != _user.Id)
+                    {
+                        if (Model.IsFollowing)
+                        {
+                            <button class="btn btn-danger-soft me-2" type="button"  onclick="RemoveFollowing('@Model.RelationId')"> <i class="far fa-user-times pe-1"></i> Unfollow </button>
+                        }
+                        else if (Model.IsPrivate)
+                        {
+                            <button class="btn btn-primary-soft me-2" type="button" onclick="AddRequest('@Model.UserId')"> <i class="far fa-user-plus pe-1"></i> Send Request </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-primary-soft me-2" type="button" onclick="AddRequest('@Model.UserId')"> <i class="far fa-user-plus pe-1"></i> Follow </button>
+                        }
+                    }
+                    @if (Model.IsFollowing)
+                    {
+                        <div class="dropdown">
+                            <!-- Card share action menu -->
+                            <button class="btn btn-light" type="button" id="profileAction2" data-bs-toggle="dropdown" aria-expanded="false">
+                                @if (Model.IsRated)
+                                {
+                                    <i class="fas fa-star pe-1"></i> <span>You Rated @Model.YourRate</span>
+                                }
+                                else
+                                {
+                                    <i class="far fa-star pe-1"></i> <span>Rate User</span>
+                                }
+                            </button>
+                            <!-- Card share action dropdown menu -->
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileAction2" style="">
+                              <li><span class="dropdown-item" style="cursor:pointer" onclick="AddRating(1)"> <i class="far fa-star pe-2"></i> 1 Star</span></li>
+                              <li><span class="dropdown-item" style="cursor:pointer" onclick="AddRating(2)"> <i class="far fa-star pe-1"></i><i class="far fa-star pe-2"></i> 2 Star</span></li>
+                              <li><span class="dropdown-item" style="cursor:pointer" onclick="AddRating(3)"> <i class="far fa-star pe-1"></i><i class="far fa-star pe-1"></i><i class="far fa-star pe-2"></i> 3 Star</span></li>
+                              <li><span class="dropdown-item" style="cursor:pointer" onclick="AddRating(4)"> <i class="far fa-star pe-1"></i><i class="far fa-star pe-1"></i><i class="far fa-star pe-1"></i><i class="far fa-star pe-2"></i> 4 Star</span></li>
+                              <li><span class="dropdown-item" style="cursor:pointer" onclick="AddRating(5)"> <i class="far fa-star pe-1"></i><i class="far fa-star pe-1"></i><i class="far fa-star pe-1"></i><i class="far fa-star pe-1"></i><i class="far fa-star pe-2"></i> 5 Star</span></li>
+                                @if(Model.IsRated)
+                                {
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><span class="dropdown-item" style="cursor:pointer" onclick="RemoveRating()"> <i class="bi bi-gear fa-fw pe-2"></i>Remove Your Rating</span></li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                    </div>
+                </div>
+              <!-- List profile -->
+              <ul class="list-inline mb-4 text-center text-sm-start mt-3 mt-sm-0">
+                <li class="list-inline-item"><i class="far fa-briefcase me-1"></i> Lead Developer</li>
+                <li class="list-inline-item"><i class="far fa-map-marker-alt me-1"></i> @Model.City</li>
+                <li class="list-inline-item"><i class="far fa-star me-1"></i> Average Rate: @Model.AvgRating.ToString()</li>
+              </ul>
+            </div>
+        </div>
+        @if (!Model.IsPrivate || Model.UserId == _user.Id || Model.IsFollowing)
+        {
+            <div id="posts-div">
+               <partial name="_PostListPartial" model="Model.UserPosts" />
+            </div>
+        }
+    </div>
+    <div class="col-lg-4">
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-12">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <h5 class="card-title">About</h5>
+                <!-- Button modal -->
+              </div>
+              <!-- Card body START -->
+              <div class="card-body position-relative pt-0">
+                <p>He moonlights difficult engrossed it, sportsmen. Interested has all Devonshire difficulty gay assistance joy.</p>
+                <!-- Date time -->
+                <ul class="list-unstyled mt-3 mb-0">
+                  <li class="mb-2"> <i class="far fa-calendar-alt fa-fw pe-1"></i> Born: <strong> @Model.BirthDate.ToString("dd MMMM yyyy") </strong> </li>
+                  <li> <i class="far fa-envelope fa-fw pe-1"></i> Email: <strong> @Model.Email </strong> </li>
+                </ul>
+              </div>
+              <!-- Card body END -->
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-12">
+            <div class="card">
+              <!-- Card header START -->
+              <div class="card-header d-flex justify-content-between border-0">
+                <h5 class="card-title">Top Posts</h5>
+              </div>
+              <!-- Card header END -->
+              <!-- Card body START -->
+              <div class="card-body position-relative pt-0">
+                @if(Model.TopPosts != null)
+                {
+                    foreach(var item in Model.TopPosts)
+                    {
+                        <div class="mb-3">
+                            <h6 class="mb-0 post-text"><a asp-area="" asp-controller="Home" asp-action="Details" asp-route-id="@item.Id">@item.Message</a></h6>
+                            <small>@item.TimeStamp.ToString("dd MMM, HH:mm")</small>
+                        </div>
+                    }
+                }
+                        
+              </div>
+              <!-- Card body END -->
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function AddRating(rate) {
+    $.ajax({
+         type: "POST",
+         url: "/Profile/AddRating?userId=@Model.UserId&rate=" + rate,
+         success: function (result) {
+             location.reload();                
+         },
+         error: function (result) {
+             alert('An error occured');
+         }
+     }); 
+}
+
+function RemoveRating() {
+    $.ajax({
+         type: "POST",
+         url: "/Profile/RemoveRating?userId=@Model.UserId",
+         success: function (result) {
+             location.reload();                
+         },
+         error: function (result) {
+             alert('An error occured');
+         }
+     }); 
+}
+
+function AddRequest(id) {
+    $.ajax({
+         type: "POST",
+         url: "/Home/AddRequest?id=" + id,
+         success: function (result) {
+             if (result.code == 0) {
+                 location.reload();       
+             }
+             else {
+                 alert(result.message); 
+             }                 
+         },
+         error: function (result) {
+             alert('An error occured');
+         }
+     }); 
+}
+
+function RemoveFollowing(id) {
+    $.ajax({
+         type: "POST",
+         url: "/Following/RemoveFollowing?id=" + id,
+         success: function (result) {
+             location.reload();       
+         },
+         error: function (result) {
+             alert('An error occured');
+         }
+     }); 
+}
+
+function RefreshPostList() {
+    $("#posts-div").load("/Profile/RefreshPosts?userId=@Model.UserId")
+}
+
+function LikePost(id) {
+    $.ajax({
+         type: "POST",
+         url: "/Home/LikePost?id=" + id,
+         success: function (result) {
+             RefreshPostList();                 
+         },
+         error: function (result) {
+             alert(result);
+         }
+     }); 
+}
+
+function DeletePost(id) {
+    $.ajax({
+         type: "POST",
+         url: "/Home/DeletePost?id=" + id,
+         success: function (result) {
+             RefreshPostList();                 
+         },
+         error: function (result) {
+             alert(result);
+         }
+     }); 
+}
+
+
+</script>

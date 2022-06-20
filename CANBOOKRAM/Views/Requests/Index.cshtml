@@ -1,0 +1,42 @@
+﻿@model List<FriendRequest>
+
+<div class="card">
+    <div class="card-header border-0 pb-0">
+       <h5 class="card-title">Requests</h5> 
+    </div>
+    <div id="requests-div" class="card-body">
+        <partial name="_RequestsPartial" />
+    </div>
+</div>
+
+<script>
+function RefreshRequests() {
+    $("#requests-div").load("Requests/RequestList")
+}
+
+function AcceptRequest(id) {
+    $.ajax({
+         type: "POST",
+         url: "Requests/AcceptRequest?id=" + id,
+         success: function (result) {
+             RefreshRequests();                 
+         },
+         error: function (result) {
+             alert('An error occured');
+         }
+     }); 
+}
+
+function RemoveRequest(id) {
+    $.ajax({
+         type: "POST",
+         url: "Requests/RemoveRequest?id=" + id,
+         success: function (result) {
+             RefreshRequests();                   
+         },
+         error: function (result) {
+             alert('An error occured');
+         }
+     }); 
+}
+</script>

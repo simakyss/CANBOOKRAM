@@ -1,0 +1,36 @@
+﻿@model UserPost
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card card-body">
+            @if (Model.Image != null)
+            {
+                <img class="card-img rounded" src="data:image/*;base64,@(Convert.ToBase64String(Model.Image))" alt="Post">
+            }
+            <div class="d-flex align-items-center justify-content-between my-3">
+                <div class="d-flex align-items-center">
+                <!-- Avatar -->
+                <a class="avatar avatar-story me-2" asp-area="" asp-controller="Profile" asp-action="Index" asp-route-id="@Model.User.Id">
+                @if (Model.User.ProfilePicture == null)
+                {
+                    <img class="avatar-img rounded-circle" src="/assets/images/pp.png" alt="">
+                }
+                else
+                {
+                    <img class="avatar-img rounded-circle" src="data:image/*;base64,@(Convert.ToBase64String(Model.User.ProfilePicture))" alt="">
+                }
+                </a>
+                <!-- Info -->
+                <div>
+                  <div class="nav nav-divider">
+                    <a asp-area="" asp-controller="Profile" asp-action="Index" asp-route-id="@Model.User.Id"><h6 class="nav-item card-title mb-0 me-2"> @Model.User.UserName </h6></a>
+                    <span class="nav-item small"> @Model.TimeStamp.ToString("dd MMM, HH:mm")</span>
+                  </div>
+                  <p class="mb-0 small">Web Developer</p>
+                </div>
+              </div>
+            </div>
+            <p>@Model.Message</p>
+        </div>
+    </div>
+</div>

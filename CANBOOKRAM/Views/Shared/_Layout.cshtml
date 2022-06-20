@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CANBOOKRAM</title>
+
+    <!-- Google Font -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+
+    <link rel="stylesheet" type="text/css" href="~/theme/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="~/theme/css/style.css" />
+</head>
+<body>
+    <header class="navbar-light fixed-top header-static bg-mode">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img class="light-mode-item navbar-brand-item" src="~/assets/images/logo.png" alt="logo">
+				<img class="dark-mode-item navbar-brand-item" src="~/assets/images/logo.png" alt="logo">
+                </a>
+
+                <button class="navbar-toggler ms-auto icon-md btn btn-light p-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-animation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+
+
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+          <div class="nav mt-3 mt-lg-0 flex-nowrap align-items-center px-4 px-lg-0">
+          <div class="nav-item w-100">
+            <form class="rounded position-relative">
+              <input class="form-control ps-5 bg-light" type="search" placeholder="Search..." aria-label="Search">
+              <button class="btn bg-transparent px-2 py-0 position-absolute top-50 start-0 translate-middle-y" type="submit"><i class="fa-light fa-magnifying-glass fs-5"> </i></button>
+            </form>
+          </div>
+        </div>
+
+        <div></div>
+      </div>
+      <ul class="nav flex-nowrap align-items-center ms-sm-3 list-unstyled">
+        <partial name="_LoginPartial" />
+        </ul>
+    </div>
+    </nav>
+    </header>
+    <main>
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

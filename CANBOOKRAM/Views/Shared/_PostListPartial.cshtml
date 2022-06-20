@@ -1,0 +1,77 @@
+﻿@model List<UserPost>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@foreach (var item in Model)
+{
+    var youLike = item.Likes.Where(i => i.User == UserManager.GetUserAsync(User).Result).FirstOrDefault();
+
+    <div class="card mb-4">
+        <div class="card-header border-0 pb-0">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <!-- Avatar -->
+                <a class="avatar avatar-story me-2" asp-area="" asp-controller="Profile" asp-action="Index" asp-route-id="@item.User.Id">
+                @if (item.User.ProfilePicture == null)
+                {
+                    <img class="avatar-img rounded-circle" src="/assets/images/pp.png" alt="">
+                }
+                else
+                {
+                    <img class="avatar-img rounded-circle" src="data:image/*;base64,@(Convert.ToBase64String(item.User.ProfilePicture))" alt="">
+                }
+                </a>
+                <!-- Info -->
+                <div>
+                  <div class="nav nav-divider">
+                    <a asp-area="" asp-controller="Profile" asp-action="Index" asp-route-id="@item.User.Id"><h6 class="nav-item card-title mb-0 me-2"> @item.User.UserName </h6></a>
+                    <span class="nav-item small"> @item.TimeStamp.ToString("dd MMM, HH:mm")</span>
+                  </div>
+                  <p class="mb-0 small">Web Developer</p>
+                </div>
+              </div>
+              <!-- Card feed action dropdown START -->
+              <div class="dropdown">
+                <a href="#" class="text-secondary btn btn-secondary-soft-hover py-1 px-2" id="cardFeedAction" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="far fa-ellipsis-h"></i>
+                </a>
+                <!-- Card feed action dropdown menu -->
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cardFeedAction">
+                  <li><a class="dropdown-item" href="#"> <i class="far fa-bookmark fa-fw pe-2"></i>Save post</a></li>
+                    @if(item.User != UserManager.GetUserAsync(User).Result)
+                    {
+                        <li><a class="dropdown-item" href="#"> <i class="far fa-user-times fa-fw pe-2"></i>Unfollow @item.User.UserName </a></li>
+                    }
+                        
+                    @if(item.User == UserManager.GetUserAsync(User).Result)
+                    {
+                       <li><hr class="dropdown-divider"></li>
+                       <li><span class="dropdown-item" onclick="DeletePost('@item.Id')" style="cursor:pointer"> <i class="far fa-trash-alt fa-fw pe-2"></i>Delete post</span></li>
+                    }
+                </ul>
+              </div>
+              <!-- Card feed action dropdown END -->
+            </div>
+          </div>
+          <div class="card-body">
+             <p>@item.Message</p>
+            @if (item.Image != null)
+            {
+                <img class="card-img" src="data:image/*;base64,@(Convert.ToBase64String(item.Image))" alt="Post">
+            }
+            <ul class="nav nav-stack pt-3 small">
+                <li class="nav-item">
+                    @if (youLike != null)
+                    {
+                        <span class="nav-link active" onclick="LikePost('@item.Id')" style="cursor:pointer"> <i class="fas fa-thumbs-up pe-1"></i>Liked (@item.Likes.Count)</span>
+                    }
+                    else
+                    {
+                        <span class="nav-link" onclick="LikePost('@item.Id')" style="cursor:pointer"> <i class="far fa-thumbs-up pe-1"></i>Liked (@item.Likes.Count)</span>
+                    }
+                </li>
+             </ul>
+          </div>
+    </div>
+} 

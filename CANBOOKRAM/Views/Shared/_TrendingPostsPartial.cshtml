@@ -1,0 +1,22 @@
+﻿@model List<UserPost>
+
+<div class="col-sm-6 col-lg-12">
+    <div class="card">
+        <!-- Card header START -->
+        <div class="card-header pb-0 border-0">
+            <h5 class="card-title mb-0">Trending Posts</h5>
+        </div>
+        <!-- Card header END -->
+        <!-- Card body START -->
+        <div class="card-body">
+            @foreach(var item in Model)
+            {
+                <div class="mb-3">
+                    <h6 class="mb-0 post-text"><a asp-area="" asp-controller="Home" asp-action="Details" asp-route-id="@item.Id">@item.Message</a></h6>
+                    <small>@item.TimeStamp.ToString("dd MMM, HH:mm")</small>
+                </div>
+            }
+        </div>
+        <!-- Card body END -->
+    </div>
+    </div>
